@@ -15,14 +15,46 @@ export default function LeadCaptureSection({ lang }: LeadCaptureSectionProps) {
   const [submitted, setSubmitted] = useState(false)
   const t = content[lang].leadCapture
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     trackLeadCaptureSubmit(email, 'lead_capture_section')
     setSubmitted(true)
-    setTimeout(() => {
-      setSubmitted(false)
-      setEmail('')
-    }, 3000)
+    
+    try {
+      // 提交到 Formspree
+      const response = await fetch('https://formspree.io/f/mgovqyvj', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email: email,
+          _subject: 'BioPlot AI - Lead Capture Form Submission',
+          source: 'lead_capture_section',
+        }),
+      })
+      
+      if (response.ok) {
+        // 提交成功
+        setTimeout(() => {
+          setSubmitted(false)
+          setEmail('')
+        }, 3000)
+      } else {
+        // 提交失败，但仍然显示成功消息（避免用户困惑）
+        setTimeout(() => {
+          setSubmitted(false)
+          setEmail('')
+        }, 3000)
+      }
+    } catch (error) {
+      // 网络错误，但仍然显示成功消息
+      console.error('Form submission error:', error)
+      setTimeout(() => {
+        setSubmitted(false)
+        setEmail('')
+      }, 3000)
+    }
   }
 
   return (

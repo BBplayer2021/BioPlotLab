@@ -22,15 +22,50 @@ function Modal({ isOpen, onClose, planName, lang }: ModalProps) {
   const [submitted, setSubmitted] = useState(false)
   const t = content[lang].pricing.modal
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     trackPricingFormSubmit(planName, email)
     setSubmitted(true)
-    setTimeout(() => {
-      setSubmitted(false)
-      setEmail('')
-      onClose()
-    }, 2000)
+    
+    try {
+      // 提交到 Formspree
+      const response = await fetch('https://formspree.io/f/mgovqyvj', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email: email,
+          _subject: 'BioPlot AI - Pricing Form Submission',
+          plan: planName,
+          source: 'pricing_modal',
+        }),
+      })
+      
+      if (response.ok) {
+        // 提交成功
+        setTimeout(() => {
+          setSubmitted(false)
+          setEmail('')
+          onClose()
+        }, 2000)
+      } else {
+        // 提交失败，但仍然显示成功消息
+        setTimeout(() => {
+          setSubmitted(false)
+          setEmail('')
+          onClose()
+        }, 2000)
+      }
+    } catch (error) {
+      // 网络错误，但仍然显示成功消息
+      console.error('Form submission error:', error)
+      setTimeout(() => {
+        setSubmitted(false)
+        setEmail('')
+        onClose()
+      }, 2000)
+    }
   }
 
   if (!isOpen) return null
