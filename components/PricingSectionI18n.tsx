@@ -74,6 +74,7 @@ function Modal({ isOpen, onClose, planName, lang }: ModalProps) {
     <div 
       className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-in fade-in duration-300"
       onClick={onClose}
+      style={{ fontFamily: lang === 'zh' ? "'PingFang SC', 'Microsoft YaHei', sans-serif" : undefined }}
     >
       <div 
         className="bg-white rounded-2xl shadow-2xl max-w-md w-full p-8 relative animate-in zoom-in-95 duration-300"
@@ -81,29 +82,34 @@ function Modal({ isOpen, onClose, planName, lang }: ModalProps) {
       >
         <button
           onClick={onClose}
-          className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 transition-colors"
+          className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 transition-colors z-10"
+          aria-label="Close"
         >
           <X className="w-6 h-6" />
         </button>
         
         <div className="text-center">
-          <div className="w-16 h-16 bg-gradient-to-br from-bio-purple to-bio-blue rounded-full flex items-center justify-center mx-auto mb-6">
-            <Check className="w-8 h-8 text-white" />
-          </div>
-          
-          <h3 className="text-2xl font-bold mb-4 text-academic-blue">
+          <h3 className="text-2xl font-bold mb-4 text-academic-blue" style={{ fontFamily: lang === 'zh' ? "'PingFang SC', 'Microsoft YaHei', sans-serif" : undefined }}>
             {t.title}
           </h3>
           
-          <p className="text-academic-gray mb-6 leading-relaxed">
+          <p className="text-academic-gray mb-4 leading-relaxed text-sm" style={{ fontFamily: lang === 'zh' ? "'PingFang SC', 'Microsoft YaHei', sans-serif" : undefined }}>
             {t.message}{' '}
             <span className="font-semibold text-bio-purple">{t.discount}</span>
             {lang === 'zh' ? '。' : '.'}
           </p>
           
-          <p className="text-sm text-academic-gray/70 mb-4">
-            {t.selectedPlan} <span className="font-semibold">{planName}</span>
-          </p>
+          {/* 微信二维码占位区域 */}
+          <div className="mb-6 flex justify-center">
+            <div className="w-48 h-48 bg-gray-100 border-2 border-dashed border-gray-300 rounded-lg flex items-center justify-center">
+              <div className="text-center">
+                <div className="text-gray-400 text-xs mb-2">📱</div>
+                <div className="text-gray-500 text-xs px-4" style={{ fontFamily: lang === 'zh' ? "'PingFang SC', 'Microsoft YaHei', sans-serif" : undefined }}>
+                  {t.qrCodePlaceholder}
+                </div>
+              </div>
+            </div>
+          </div>
           
           <form onSubmit={handleSubmit} className="mt-6">
             <input
@@ -114,11 +120,13 @@ function Modal({ isOpen, onClose, planName, lang }: ModalProps) {
               required
               disabled={submitted}
               className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-bio-purple focus:border-transparent disabled:opacity-50"
+              style={{ fontFamily: lang === 'zh' ? "'PingFang SC', 'Microsoft YaHei', sans-serif" : undefined }}
             />
             <button
               type="submit"
               disabled={submitted}
               className="w-full mt-4 px-6 py-3 bg-gradient-to-r from-bio-purple to-bio-blue text-white rounded-lg font-semibold hover:shadow-lg transition-all duration-300 disabled:opacity-70 disabled:cursor-not-allowed"
+              style={{ fontFamily: lang === 'zh' ? "'PingFang SC', 'Microsoft YaHei', sans-serif" : undefined }}
             >
               {submitted ? t.submitted : t.submit}
             </button>
@@ -157,12 +165,12 @@ export default function PricingSectionI18n({ lang }: PricingSectionI18nProps) {
 
   return (
     <>
-      <section id="pricing" className="py-24 px-4 sm:px-6 lg:px-8 bg-white">
+      <section id="pricing" className="py-24 px-4 sm:px-6 lg:px-8 bg-white" style={{ fontFamily: lang === 'zh' ? "'PingFang SC', 'Microsoft YaHei', sans-serif" : undefined }}>
         <div className="max-w-6xl mx-auto">
-          <h2 className="text-3xl sm:text-4xl font-bold text-center mb-4 text-academic-blue font-serif">
+          <h2 className="text-3xl sm:text-4xl font-bold text-center mb-4 text-academic-blue font-serif" style={{ fontFamily: lang === 'zh' ? "'PingFang SC', 'Microsoft YaHei', sans-serif" : undefined }}>
             {t.title}
           </h2>
-          <p className="text-center text-academic-gray mb-16 text-lg">
+          <p className="text-center text-academic-gray mb-16 text-lg" style={{ fontFamily: lang === 'zh' ? "'PingFang SC', 'Microsoft YaHei', sans-serif" : undefined }}>
             {t.subtitle}
           </p>
 
@@ -178,22 +186,24 @@ export default function PricingSectionI18n({ lang }: PricingSectionI18nProps) {
               >
                 {plan.popular && (
                   <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
-                    <span className="bg-gradient-to-r from-bio-purple to-bio-blue text-white px-4 py-1 rounded-full text-sm font-semibold">
+                    <span className="bg-gradient-to-r from-bio-purple to-bio-blue text-white px-4 py-1 rounded-full text-sm font-semibold" style={{ fontFamily: lang === 'zh' ? "'PingFang SC', 'Microsoft YaHei', sans-serif" : undefined }}>
                       {plan.popularLabel || 'Recommended'}
                     </span>
                   </div>
                 )}
 
                 <div className="text-center mb-8">
-                  <h3 className="text-2xl font-bold mb-2 text-academic-blue">
+                  <h3 className="text-2xl font-bold mb-2 text-academic-blue" style={{ fontFamily: lang === 'zh' ? "'PingFang SC', 'Microsoft YaHei', sans-serif" : undefined }}>
                     {plan.name}
                   </h3>
-                  <p className="text-sm text-academic-gray mb-4">{plan.description}</p>
+                  <p className="text-sm text-academic-gray mb-4" style={{ fontFamily: lang === 'zh' ? "'PingFang SC', 'Microsoft YaHei', sans-serif" : undefined }}>{plan.description}</p>
                   <div className="flex items-baseline justify-center gap-2">
-                    <span className="text-4xl font-bold bg-gradient-to-r bg-clip-text text-transparent bg-gradient-to-r from-bio-purple to-bio-blue">
-                      ${plan.price}
+                    <span className="text-4xl font-bold bg-gradient-to-r bg-clip-text text-transparent bg-gradient-to-r from-bio-purple to-bio-blue" style={{ fontFamily: lang === 'zh' ? "'PingFang SC', 'Microsoft YaHei', sans-serif" : undefined }}>
+                      {(plan as any).priceDisplay || (lang === 'zh' ? `¥${plan.price}` : `$${plan.price}`)}
                     </span>
-                    <span className="text-academic-gray">/{plan.period}</span>
+                    {!(plan as any).priceDisplay && (
+                      <span className="text-academic-gray" style={{ fontFamily: lang === 'zh' ? "'PingFang SC', 'Microsoft YaHei', sans-serif" : undefined }}>/{plan.period}</span>
+                    )}
                   </div>
                 </div>
 
@@ -209,6 +219,7 @@ export default function PricingSectionI18n({ lang }: PricingSectionI18nProps) {
                         className={`${
                           feature.included ? 'text-academic-gray' : 'text-gray-400'
                         }`}
+                        style={{ fontFamily: lang === 'zh' ? "'PingFang SC', 'Microsoft YaHei', sans-serif" : undefined }}
                       >
                         {feature.text}
                       </span>
@@ -223,12 +234,20 @@ export default function PricingSectionI18n({ lang }: PricingSectionI18nProps) {
                       ? 'bg-gradient-to-r from-bio-purple to-bio-blue text-white hover:shadow-lg hover:scale-105'
                       : 'bg-gray-100 text-academic-blue hover:bg-gray-200'
                   }`}
+                  style={{ fontFamily: lang === 'zh' ? "'PingFang SC', 'Microsoft YaHei', sans-serif" : undefined }}
                 >
                   {plan.cta}
                 </button>
               </div>
             ))}
           </div>
+          
+          {/* 发票说明 */}
+          {t.invoiceNote && (
+            <p className="text-center text-gray-500 text-sm mt-8" style={{ fontFamily: lang === 'zh' ? "'PingFang SC', 'Microsoft YaHei', sans-serif" : undefined }}>
+              {t.invoiceNote}
+            </p>
+          )}
         </div>
       </section>
 
