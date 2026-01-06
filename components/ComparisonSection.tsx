@@ -9,57 +9,98 @@ interface ComparisonSectionProps {
   lang: Language
 }
 
-// 示例 ggplot2 代码
+// 示例 ggplot2 代码 - Nature/Cell 期刊级标准
 const exampleCode = `library(ggplot2)
 library(ggrepel)
+library(dplyr)
 
-# BioPlot AI 生成的代码 - 99% 样式还原
-volcano_plot <- ggplot(data, aes(x = log2FC, y = -log10(pvalue))) +
+# BioPlotLab 生成的代码 - 99% 样式还原
+# 符合 Nature/Cell 期刊发表标准
+
+volcano_plot <- ggplot(data, aes(x = log2FC, y = neg_log10_p)) +
+  # 绘制散点图
   geom_point(
-    aes(color = significance),
-    alpha = 0.6,
-    size = 2.5
+    aes(color = Significance),
+    size = 1.5,                    # 点的大小
+    alpha = 0.6,                   # 透明度
+    stroke = 0
   ) +
+  
+  # Nature 配色方案
   scale_color_manual(
     values = c(
-      "NS" = "#999999",      # 非显著：深灰色
-      "Up" = "#E64B35",      # 上调：半透明红色
-      "Down" = "#4DBBD5"     # 下调：半透明蓝色
-    )
+      "Significantly Up-Regulated" = "#E64B35",    # 深红色
+      "Significantly Down-Regulated" = "#3C5488", # 深蓝色
+      "No Significant Change" = "#999999"         # 浅灰色
+    ),
+    name = "Significance"
   ) +
-  geom_hline(yintercept = -log10(0.05), 
-             linetype = "dashed", 
-             color = "#666666", 
-             linewidth = 0.5) +
-  geom_vline(xintercept = c(-1, 1), 
-             linetype = "dashed", 
-             color = "#666666", 
-             linewidth = 0.5) +
+  
+  # 辅助线：log2FC = -1, 1
+  geom_vline(
+    xintercept = c(-1, 1),
+    linetype = "dashed",
+    color = "#666666",
+    linewidth = 0.5,
+    alpha = 0.6
+  ) +
+  
+  # 辅助线：p-value = 0.05
+  geom_hline(
+    yintercept = -log10(0.05),
+    linetype = "dashed",
+    color = "#666666",
+    linewidth = 0.5,
+    alpha = 0.6
+  ) +
+  
+  # 基因标签标注（Top 15）
   geom_text_repel(
     data = top_genes,
-    aes(label = gene_name),
+    aes(label = Symbol),
     size = 3,
-    family = "Helvetica",
+    family = "Arial",
     color = "#333333",
-    max.overlaps = 20
+    segment.color = "#666666",
+    segment.size = 0.3,
+    box.padding = 0.5,
+    point.padding = 0.3
   ) +
-  theme_minimal() +
-  theme(
-    text = element_text(family = "Helvetica", size = 11),
-    axis.text = element_text(color = "#4A4A4A"),
-    axis.title = element_text(color = "#2C2C2C", face = "bold"),
-    axis.line = element_line(color = "#4A4A4A", linewidth = 0.5),
-    panel.grid = element_blank(),
-    legend.position = "right",
-    legend.title = element_blank()
-  ) +
+  
+  # 坐标轴标签
   labs(
-    x = "Log2 Fold Change",
-    y = "-Log10 P-value"
+    x = "Log2 Fold-Change",
+    y = "-log10(Padj)"
+  ) +
+  
+  # 坐标轴范围
+  xlim(-10, 10) +
+  ylim(0, 300) +
+  
+  # 主题设置
+  theme_classic() +
+  theme(
+    # 坐标轴
+    axis.line = element_line(color = "#4A4A4A", linewidth = 0.5),
+    axis.text = element_text(family = "Arial", size = 10, color = "#4A4A4A"),
+    axis.title = element_text(family = "Arial", size = 11, 
+                              color = "#2C2C2C", face = "bold"),
+    
+    # 图例（右上角内部）
+    legend.position = c(0.98, 0.98),
+    legend.justification = c(1, 1),
+    legend.background = element_rect(fill = "white", alpha = 0.9),
+    legend.title = element_text(family = "Arial", size = 10, 
+                                face = "bold", color = "#2C2C2C"),
+    legend.text = element_text(family = "Arial", size = 9, color = "#4A4A4A"),
+    
+    # 去除网格线
+    panel.grid = element_blank()
   )
 
-ggsave("volcano_plot.pdf", volcano_plot, 
-       width = 8, height = 6, device = "pdf")`
+# 保存为高分辨率图片（300 DPI）
+ggsave("volcano_plot_nature_style.png", volcano_plot,
+       width = 8, height = 6, units = "in", dpi = 300, bg = "white")`
 
 export default function ComparisonSection({ lang }: ComparisonSectionProps) {
   const t = content[lang].comparison
@@ -133,8 +174,12 @@ export default function ComparisonSection({ lang }: ComparisonSectionProps) {
             <h2 className="text-3xl sm:text-4xl font-bold mb-4 text-academic-blue font-serif">
               {t.title}
             </h2>
-            <p className="text-lg text-academic-gray max-w-3xl mx-auto leading-relaxed">
+            <p className="text-lg text-academic-gray max-w-3xl mx-auto leading-relaxed mb-4">
               {t.subtitle}
+            </p>
+            {/* 视觉提示小标题 */}
+            <p className="text-sm font-semibold text-bio-purple tracking-wider uppercase mb-2">
+              {t.precisionTagline}
             </p>
           </div>
 
@@ -147,20 +192,50 @@ export default function ComparisonSection({ lang }: ComparisonSectionProps) {
               onTouchMove={handleTouchMove}
               onTouchEnd={() => setIsDragging(false)}
             >
-              {/* Original 图表（左侧） */}
-              <div className="relative w-full aspect-[4/3] bg-white">
-                <div className="absolute inset-0 p-6 sm:p-8">
-                  <VolcanoPlotOriginal />
+              {/* Original 图表（左侧） - 使用真实图片 */}
+              <div className="relative w-full aspect-[4/3] bg-gray-100">
+                <img
+                  src="/images/volcano-default.png"
+                  alt="Default volcano plot output"
+                  className="absolute inset-0 w-full h-full object-cover"
+                  onError={(e) => {
+                    // 如果图片不存在，显示占位符
+                    const target = e.target as HTMLImageElement
+                    target.style.display = 'none'
+                    if (target.nextElementSibling) {
+                      (target.nextElementSibling as HTMLElement).style.display = 'block'
+                    }
+                  }}
+                />
+                {/* 图片加载失败时的占位符 */}
+                <div className="absolute inset-0 flex items-center justify-center bg-gray-200" style={{ display: 'none' }}>
+                  <p className="text-gray-500 text-sm">请将 volcano-default.png 放置在 /public/images/ 目录</p>
                 </div>
                 
-                {/* Reproduced 图表（右侧，通过clip-path显示） */}
+                {/* Reproduced 图表（右侧，通过clip-path显示） - 使用真实图片 */}
                 <div
-                  className="absolute inset-0 p-6 sm:p-8"
+                  className="absolute inset-0"
                   style={{
                     clipPath: `inset(0 ${100 - sliderPosition}% 0 0)`,
                   }}
                 >
-                  <VolcanoPlotReproduced />
+                  <img
+                    src="/images/volcano-nature.png"
+                    alt="Nature style volcano plot reproduced by BioPlotLab"
+                    className="w-full h-full object-cover"
+                    onError={(e) => {
+                      // 如果图片不存在，显示占位符
+                      const target = e.target as HTMLImageElement
+                      target.style.display = 'none'
+                      if (target.nextElementSibling) {
+                        (target.nextElementSibling as HTMLElement).style.display = 'block'
+                      }
+                    }}
+                  />
+                  {/* 图片加载失败时的占位符 */}
+                  <div className="absolute inset-0 flex items-center justify-center bg-green-50" style={{ display: 'none' }}>
+                    <p className="text-gray-500 text-sm">请将 volcano-nature.png 放置在 /public/images/ 目录</p>
+                  </div>
                 </div>
 
                 {/* 滑块控制条 */}
@@ -228,8 +303,16 @@ export default function ComparisonSection({ lang }: ComparisonSectionProps) {
                 <div className="w-3 h-3 rounded-full bg-red-600"></div>
                 <h3 className="text-lg font-semibold text-academic-blue">{t.beforeTitle}</h3>
               </div>
-              <div className="aspect-[4/3] bg-white rounded-lg p-4 border-2 border-gray-300">
-                <VolcanoPlotOriginal />
+              <div className="aspect-[4/3] bg-white rounded-lg overflow-hidden border-2 border-gray-300">
+                <img
+                  src="/images/volcano-default.png"
+                  alt="Default volcano plot"
+                  className="w-full h-full object-cover"
+                  onError={(e) => {
+                    const target = e.target as HTMLImageElement
+                    target.style.display = 'none'
+                  }}
+                />
               </div>
               <p className="mt-4 text-sm text-academic-gray text-center leading-relaxed">
                 {t.beforeDescription}
@@ -241,8 +324,16 @@ export default function ComparisonSection({ lang }: ComparisonSectionProps) {
                 <Sparkles className="w-5 h-5 text-green-600" />
                 <h3 className="text-lg font-semibold text-academic-blue">{t.afterTitle}</h3>
               </div>
-              <div className="aspect-[4/3] bg-white rounded-lg p-4 border-2 border-green-400 shadow-inner">
-                <VolcanoPlotReproduced />
+              <div className="aspect-[4/3] bg-white rounded-lg overflow-hidden border-2 border-green-400 shadow-inner">
+                <img
+                  src="/images/volcano-nature.png"
+                  alt="Nature style volcano plot"
+                  className="w-full h-full object-cover"
+                  onError={(e) => {
+                    const target = e.target as HTMLImageElement
+                    target.style.display = 'none'
+                  }}
+                />
               </div>
               <p className="mt-4 text-sm text-academic-gray text-center leading-relaxed">
                 {t.afterDescription}
