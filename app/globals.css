@@ -18,7 +18,7 @@ body {
       rgb(var(--background-end-rgb))
     )
     rgb(var(--background-start-rgb));
-  font-family: 'Inter', system-ui, sans-serif;
+  font-family: 'PingFang SC', 'Microsoft YaHei', 'Helvetica', 'Arial', system-ui, sans-serif;
 }
 
 /* 平滑滚动 */

@@ -168,18 +168,17 @@ export default function ComparisonSection({ lang }: ComparisonSectionProps) {
         <div className="max-w-7xl mx-auto">
           {/* 标题区域 */}
           <div className="text-center mb-16">
-            <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-bio-purple/10 to-bio-blue/10 rounded-full mb-6">
-              <ArrowLeftRight className="w-8 h-8 text-bio-purple" />
+            <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-blue-600/10 to-slate-700/10 rounded-full mb-6">
+              <ArrowLeftRight className="w-8 h-8 text-blue-600" />
             </div>
-            <h2 className="text-3xl sm:text-4xl font-bold mb-4 text-academic-blue font-serif">
+            <h2 
+              className="text-3xl sm:text-4xl font-bold mb-4 text-slate-900"
+              style={{ fontFamily: lang === 'zh' ? "'PingFang SC', 'Microsoft YaHei', sans-serif" : "'Helvetica', 'Arial', sans-serif" }}
+            >
               {t.title}
             </h2>
-            <p className="text-lg text-academic-gray max-w-3xl mx-auto leading-relaxed mb-4">
+            <p className="text-lg text-slate-600 max-w-3xl mx-auto leading-relaxed mb-4">
               {t.subtitle}
-            </p>
-            {/* 视觉提示小标题 */}
-            <p className="text-sm font-semibold text-bio-purple tracking-wider uppercase mb-2">
-              {t.precisionTagline}
             </p>
           </div>
 
@@ -255,32 +254,21 @@ export default function ComparisonSection({ lang }: ComparisonSectionProps) {
                   </div>
                 </div>
 
-                {/* 标签 */}
-                <div className="absolute top-4 left-4 bg-red-600/95 text-white px-4 py-2 rounded-lg text-sm font-semibold shadow-lg z-20 backdrop-blur-sm">
-                  {t.beforeLabel}
-                </div>
-                <div className="absolute top-4 right-4 bg-green-600/95 text-white px-4 py-2 rounded-lg text-sm font-semibold shadow-lg z-20 backdrop-blur-sm">
-                  {t.afterLabel}
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* 技术说明覆盖层 */}
-          <div className="max-w-5xl mx-auto mb-12">
-            <div className="bg-gradient-to-br from-gray-50 to-blue-50 rounded-xl p-6 sm:p-8 border border-gray-200">
-              <div className="flex items-start gap-4">
-                <div className="flex-shrink-0 w-12 h-12 bg-gradient-to-br from-bio-purple to-bio-blue rounded-lg flex items-center justify-center">
-                  <Sparkles className="w-6 h-6 text-white" />
-                </div>
-                <div className="flex-1">
-                  <h3 className="text-lg font-bold text-academic-blue mb-2">
-                    {t.precisionTitle}
-                  </h3>
-                  <p className="text-academic-gray leading-relaxed">
-                    {t.precisionMetrics}
-                  </p>
-                </div>
+                     {/* 标签 */}
+                     <div className="absolute top-4 left-4 bg-blue-800/95 text-white px-4 py-2 rounded-lg text-sm font-semibold shadow-lg z-20 backdrop-blur-sm border border-blue-600/50">
+                       {t.beforeLabel}
+                     </div>
+                     <div className="absolute top-4 right-4 bg-emerald-600/95 text-white px-4 py-2 rounded-lg text-sm font-semibold shadow-lg z-20 backdrop-blur-sm border border-emerald-400/50">
+                       {t.afterLabel}
+                     </div>
+                     
+                     {/* 悬浮标签：99% 视觉相似度 */}
+                     <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white/95 text-slate-800 px-6 py-3 rounded-xl text-sm font-bold shadow-2xl z-30 backdrop-blur-md border-2 border-blue-400/50">
+                       <div className="flex items-center gap-2">
+                         <Sparkles className="w-4 h-4 text-blue-600" />
+                         <span>{t.floatingTag}</span>
+                       </div>
+                     </div>
               </div>
             </div>
           </div>
@@ -289,56 +277,11 @@ export default function ComparisonSection({ lang }: ComparisonSectionProps) {
           <div className="text-center mb-12">
             <button
               onClick={() => setShowCodeModal(true)}
-              className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-bio-purple to-bio-blue text-white rounded-lg font-semibold hover:shadow-lg transition-all duration-300 hover:scale-105"
+              className="inline-flex items-center gap-2 px-8 py-4 bg-gradient-to-r from-blue-600 to-blue-500 text-white rounded-xl font-semibold hover:shadow-lg transition-all duration-300 hover:scale-105"
             >
               <Code className="w-5 h-5" />
               {t.viewCode}
             </button>
-          </div>
-
-          {/* 并排对比（移动端友好） */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto">
-            <div className="bg-gray-50 rounded-xl p-6 shadow-lg border border-gray-200">
-              <div className="flex items-center gap-2 mb-4">
-                <div className="w-3 h-3 rounded-full bg-red-600"></div>
-                <h3 className="text-lg font-semibold text-academic-blue">{t.beforeTitle}</h3>
-              </div>
-              <div className="aspect-[4/3] bg-white rounded-lg overflow-hidden border-2 border-gray-300">
-                <img
-                  src="/images/volcano-default.png"
-                  alt="Default volcano plot"
-                  className="w-full h-full object-cover"
-                  onError={(e) => {
-                    const target = e.target as HTMLImageElement
-                    target.style.display = 'none'
-                  }}
-                />
-              </div>
-              <p className="mt-4 text-sm text-academic-gray text-center leading-relaxed">
-                {t.beforeDescription}
-              </p>
-            </div>
-
-            <div className="bg-gradient-to-br from-green-50 to-emerald-50 rounded-xl p-6 shadow-lg border-2 border-green-300">
-              <div className="flex items-center gap-2 mb-4">
-                <Sparkles className="w-5 h-5 text-green-600" />
-                <h3 className="text-lg font-semibold text-academic-blue">{t.afterTitle}</h3>
-              </div>
-              <div className="aspect-[4/3] bg-white rounded-lg overflow-hidden border-2 border-green-400 shadow-inner">
-                <img
-                  src="/images/volcano-nature.png"
-                  alt="Nature style volcano plot"
-                  className="w-full h-full object-cover"
-                  onError={(e) => {
-                    const target = e.target as HTMLImageElement
-                    target.style.display = 'none'
-                  }}
-                />
-              </div>
-              <p className="mt-4 text-sm text-academic-gray text-center leading-relaxed">
-                {t.afterDescription}
-              </p>
-            </div>
           </div>
         </div>
       </section>
